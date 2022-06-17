@@ -4,6 +4,7 @@ const firstline = require("firstline")
 const hub = require("docker-hub-utils")
 const path = require("path")
 const fs = require("fs")
+const { debug } = require("console")
 
 function getImageTag(imageName, distribution) {
     if (imageName == "debian") {
@@ -32,6 +33,7 @@ async function main() {
         const sourceRelativeDirectory = core.getInput("source_directory") || "./"
         const artifactsRelativeDirectory = core.getInput("artifacts_directory") || "./"
         const osDistribution = core.getInput("os_distribution") || ""
+        const targetReleases = core.getInput("target_releases") || ""
 
         const workspaceDirectory = process.cwd()
         const sourceDirectory = path.join(workspaceDirectory, sourceRelativeDirectory)
@@ -61,6 +63,7 @@ async function main() {
             arch: cpuArchitecture,
             image: image,
             container: container,
+            targetReleases: targetReleases,
             workspaceDirectory: workspaceDirectory,
             sourceDirectory: sourceDirectory,
             buildDirectory: buildDirectory,
@@ -135,8 +138,10 @@ async function main() {
             await exec.exec("docker", [
                 "exec",
                 container,
-                "apt-get", "build-dep", "-yq", "-t", imageTag, sourceDirectory
-            ])
+                "apt-get", "build-dep", "-yq", "-t", imageTag
+            ].concat((targetReleases == "") ? [] : targetReleases.split(" ").map(function (item) {
+                return ["-t", item]
+            }).flat()).concat(sourceDirectory))
             core.endGroup()
         }
 
