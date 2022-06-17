@@ -33,7 +33,6 @@ async function main() {
         const sourceRelativeDirectory = core.getInput("source_directory") || "./"
         const artifactsRelativeDirectory = core.getInput("artifacts_directory") || "./"
         const osDistribution = core.getInput("os_distribution") || ""
-        const targetReleases = core.getInput("target_releases") || ""
 
         const workspaceDirectory = process.cwd()
         const sourceDirectory = path.join(workspaceDirectory, sourceRelativeDirectory)
@@ -50,6 +49,7 @@ async function main() {
         const imageTag = await getImageTag(imageName, distribution)
         const container = pkg
         const image = imageName + ":" + imageTag
+        const releases = core.getInput("releases").split(" ") || [ imageTag ]
 
         fs.mkdirSync(artifactsDirectory, { recursive: true })
 
@@ -63,7 +63,7 @@ async function main() {
             arch: cpuArchitecture,
             image: image,
             container: container,
-            targetReleases: targetReleases,
+            releases: releases,
             workspaceDirectory: workspaceDirectory,
             sourceDirectory: sourceDirectory,
             buildDirectory: buildDirectory,
@@ -138,8 +138,8 @@ async function main() {
             await exec.exec("docker", [
                 "exec",
                 container,
-                "apt-get", "build-dep", "-yq", "-t", imageTag
-            ].concat((targetReleases == "") ? [] : targetReleases.split(" ").map(function (item) {
+                "apt-get", "build-dep", "-yq"
+            ].concat(releases.map(function (item) {
                 return ["-t", item]
             }).flat()).concat(sourceDirectory))
             core.endGroup()
