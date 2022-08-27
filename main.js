@@ -129,7 +129,7 @@ async function main() {
         await exec.exec("docker", [
             "exec",
             container,
-            "dpkg", "--configure", "-a"
+            "apt-mark", "showhold"
         ])
         await exec.exec("docker", [
             "exec",
