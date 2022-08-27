@@ -129,7 +129,7 @@ async function main() {
         await exec.exec("docker", [
             "exec",
             container,
-            "apt-get", "install", "-yq", "-t", imageTag, "libc6-dev"
+            "apt-get", "install", "-yq", "libtool"
         ])
         await exec.exec("docker", [
             "exec",
