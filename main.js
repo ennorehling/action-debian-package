@@ -75,7 +75,7 @@ async function main() {
         if (cpuArchitecture != "amd64") {
             core.startGroup("Install QEMU")
             // Need newer QEMU to avoid errors
-            await exec.exec("wget", ["http://mirrors.kernel.org/ubuntu/pool/universe/q/qemu/qemu-user-static_7.0+dfsg-7ubuntu1_amd64.deb", "-O", "/tmp/qemu.deb"])
+            await exec.exec("wget", ["http://mirrors.kernel.org/ubuntu/pool/universe/q/qemu/qemu-user-static_6.2+dfsg-2ubuntu6_amd64.deb", "-O", "/tmp/qemu.deb"])
             await exec.exec("sudo", ["dpkg", "-i", "/tmp/qemu.deb"])
             core.endGroup()
         }
