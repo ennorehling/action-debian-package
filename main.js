@@ -124,6 +124,22 @@ async function main() {
         ])
         core.endGroup()
 
+        if (revision) {
+            core.startGroup("Create tarball")
+            await exec.exec("docker", [
+                "exec",
+                container,
+                "tar",
+                "--exclude-vcs",
+                "--exclude", "./debian",
+                "--transform", `s/^\./${pkg}-${version}/S`,
+                "-cvzf", `${buildDirectory}/${pkg}_${version}.orig.tar.gz`,
+                "-C", sourceDirectory,
+                "./"
+            ])
+            core.endGroup()
+        }
+
         core.startGroup("Update packages list")
         await exec.exec("docker", [
             "exec",
@@ -174,17 +190,6 @@ async function main() {
                 container,
                 "bash", "-c",
                 `apt-get build-dep -yq -t '${imageTag}' '${sourceDirectory}' || apt-get build-dep -yq '${sourceDirectory}'`
-            ])
-            core.endGroup()
-        }
-
-        if (revision) {
-            core.startGroup("Create tarball")
-            await exec.exec("docker", [
-                "exec",
-                container,
-                "git-deborig",
-                "HEAD"
             ])
             core.endGroup()
         }
