@@ -183,6 +183,11 @@ async function main() {
             await exec.exec("docker", [
                 "exec",
                 container,
+                "bash", "-c", "pwd"
+            ])
+            await exec.exec("docker", [
+                "exec",
+                container,
                 "git-deborig",
                 "HEAD"
             ])
