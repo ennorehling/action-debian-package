@@ -183,7 +183,7 @@ async function main() {
             await exec.exec("docker", [
                 "exec",
                 container,
-                "bash", "-c", "pwd"
+                "bash", "-c", "ls -la"
             ])
             await exec.exec("docker", [
                 "exec",
